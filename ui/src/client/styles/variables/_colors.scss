@@ -1,0 +1,15 @@
+$primary-1: #822E81;
+$primary-2: #F46036;
+$primary-3: #1B998B;
+$primary-4: #C5D86D;
+$primary-5: #D7263D;
+
+$primary-colors-1: $primary-1 $primary-2 $primary-3 $primary-4 $primary-5;
+$primary-colors-2: lighten($primary-1, 40%) lighten($primary-2, 40%) lighten($primary-3, 40%) lighten($primary-4, 40%) lighten($primary-5, 40%);
+$primary-colors-3: $primary-1 $primary-2 $primary-3 $primary-4 $primary-5;
+
+:export {
+  primary-colors-1 : $primary-colors-1;
+  primary-colors-2 : $primary-colors-2;
+  primary-colors-3 : $primary-colors-3;
+}

@@ -1,0 +1,18 @@
+#!/bin/bash
+
+PR="$(echo $HEROKU_APP_NAME | sed 's/^.*\-\([0-9].*\)$/\1/')"
+COMMENTS=$(curl -X GET -H "Authorization: Basic ${GITHUB_AUTH_KEY}" -H "Cache-Control: no-cache" "https://api.github.com/repos/Financial-Times/nightingale/issues/${PR}/comments")
+BODY="$(cat ./checklist)"
+
+if [ ${#COMMENTS} = 4 ]; then
+
+  curl -X POST "https://api.github.com/repos/Financial-Times/nightingale/issues/${PR}/comments" \
+  -H "Authorization: Basic ${GITHUB_AUTH_KEY}" \
+  -H "Cache-Control: no-cache" \
+  -d \
+  "{
+  \"body\": \"$BODY\",
+  \"in_reply_to\": $PR
+  }"
+
+fi

@@ -1,0 +1,11 @@
+{
+  "name": "Publish Carousel",
+  "verbose": true,
+  "unmockedModulePathPatterns" : [
+    "react"
+  ],
+  "testPathIgnorePatterns" : [
+    "/node_modules/",
+    "/_build/"
+  ]
+}

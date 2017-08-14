@@ -1,0 +1,11 @@
+node_modules
+_build
+coverage
+npm-debug.log
+eslint
+.env
+test/bin/*.jar
+test/nightwatch/*.txt
+test/nightwatch/report
+test/nightwatch/screenshots
+.DS_Store

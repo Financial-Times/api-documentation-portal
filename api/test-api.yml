@@ -1,0 +1,230 @@
+basePath: /__concept-search-api
+host: dynpub-eu-up.ft.com
+info:
+  contact:
+    email: universal.publishing@ft.com
+    name: Universal Publishing
+  description: A microservice that provides endpoints to query for UPP V2 Concepts
+  license:
+    name: MIT
+  title: Concept Search API
+  version: 1.0.25
+paths:
+  /__build-info:
+    get:
+      description: |
+        Returns application build info, such as the git repository and revision, the golang version it was built with, and the app release version.
+      produces:
+      - application/json; charset=UTF-8
+      responses:
+        200:
+          description: Outputs build information as described in the summary.
+          examples:
+            application/json; charset=UTF-8:
+              builder: go version go1.6.3 linux/amd64
+              dateTime: "20161123122615"
+              repository: https://github.com/Financial-Times/concept-search-api.git
+              revision: 7cdbdb18b4a518eef3ebb1b545fc124612f9d7cd
+              version: 0.0.1
+      summary: Build Information
+      tags:
+      - Info
+  /__gtg:
+    get:
+      description: Lightly healthchecks the application, and returns a 200 if it's
+        Good-To-Go.
+      responses:
+        200:
+          description: The application is healthy enough to perform all its functions
+            correctly - i.e. good to go.
+        503:
+          description: |
+            One or more of the applications healthchecks have failed, so please do not use the app. See the /__health endpoint for more detailed information.
+      summary: Good To Go
+      tags:
+      - Health
+  /__health:
+    get:
+      description: Runs application healthchecks and returns FT Healthcheck style
+        json.
+      produces:
+      - application/json
+      responses:
+        200:
+          description: |
+            Should always return 200 along with the output of the healthchecks - regardless of whether the healthchecks failed or not. Please inspect the overall ok property to see whether or not the application is healthy.
+          examples:
+            application/json:
+              checks:
+              - businessImpact: No Business Impact.
+                checkOutput: OK
+                lastUpdated: 2017-01-16T10:26:47.222805121Z
+                name: ExampleHealthcheck
+                ok: true
+                panicGuide: https://dewey.ft.com/some-app.html
+                severity: 1
+                technicalSummary: Some engaging technical summary
+              description: A concise description.
+              name: app-name
+              ok: true
+              schemaVersion: 1
+      summary: Healthchecks
+      tags:
+      - Health
+  /__health-details:
+    get:
+      description: Returns healthcheck data for the external ES cluster.
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Returns ES style status information.
+          examples:
+            application/json:
+              active_primary_shards: 16
+              active_shards: 32
+              active_shards_percent_as_number: 100
+              cluster_name: a-cluster-name
+              delayed_unassigned_shards: 0
+              indices: null
+              initializing_shards: 0
+              number_of_data_nodes: 3
+              number_of_in_flight_fetch: 0
+              number_of_nodes: 6
+              number_of_pending_tasks: 0
+              relocating_shards: 0
+              status: green
+              task_max_waiting_in_queue_millis: 0
+              timed_out: false
+              unassigned_shards: 0
+              validation_failures: null
+      summary: Healthcheck Details
+      tags:
+      - Health
+  /concept/search:
+    post:
+      consumes:
+      - application/json
+      description: Search for Concepts using ES query terms.
+      parameters:
+      - description: Include the ES scores for each item in the response.
+        in: query
+        name: include_score
+        required: false
+        type: boolean
+      - description: The concept search term to query for.
+        in: body
+        name: body
+        required: true
+        schema:
+          example:
+            term: Analysis
+          properties:
+            term:
+              required:
+              - term
+              type: string
+          type: object
+      responses:
+        200:
+          description: Returns concepts based on the provided query parameters.
+          schema:
+            properties:
+              results:
+                example:
+                  results:
+                  - apiUrl: http://api.ft.com/things/61d707b5-6fab-3541-b017-49b72de80772
+                    id: http://api.ft.com/things/61d707b5-6fab-3541-b017-49b72de80772
+                    prefLabel: Analysis
+                items:
+                  properties:
+                    apiUrl:
+                      type: string
+                    directType:
+                      type: string
+                    id:
+                      type: string
+                    items:
+                      type: string
+                    prefLabel:
+                      type: string
+                    types:
+                      type:
+                      - array
+                      - "null"
+                  type: object
+                required:
+                - results
+                type: array
+            type: object
+        400:
+          description: Incorrect request body.
+        404:
+          description: Incorrect request parameters or invalid concept type.
+        500:
+          description: Failed to search for concepts, usually caused by issues with
+            ES.
+      summary: Concept Search by Terms
+      tags:
+      - Public API
+  /concepts:
+    get:
+      description: Get all Concepts by type or search for concepts using a query.
+      parameters:
+      - allowMultiple: true
+        description: |
+          The type of Concept to search for as a URI. When used without a mode, only a single value for type can be used. The results will be the first 50 concepts of that type - this is only useful for small collections such as Genres. When used in combination with other modes such as `mode=autocomplete`, this will restrict queries to search for concepts by the given type. Multiple types can be specified in the request. However, the only current supported combination is Person + Organisation + Location + Topic with `mode=autocomplete`.
+        enum:
+        - http://www.ft.com/ontology/Genre
+        - http://www.ft.com/ontology/product/Brand
+        - http://www.ft.com/ontology/person/Person
+        - http://www.ft.com/ontology/organisation/Organisation
+        - http://www.ft.com/ontology/Location
+        - http://www.ft.com/ontology/Topic
+        in: query
+        name: type
+        required: true
+        type: string
+      - description: The query text to use to find concepts. Must be set if the `mode=autocomplete`.
+        in: query
+        name: q
+        required: false
+        type: string
+        x-example: analysis
+      - description: |
+          The mode for the search request. Currently only supports a value of autocomplete, which will provide fast typeahead search functionality. If set to autocomplete, then a value for `q` is required.
+        enum:
+        - autocomplete
+        in: query
+        name: mode
+        required: false
+        type: string
+      - description: |
+          The boost to apply to the request. Currently only supports boosting by FT Author, which requires a query `type=http://www.ft.com/ontology/person/Person`, `mode=autocomplete` and a value for `q`.
+        enum:
+        - authors
+        in: query
+        name: boost
+        required: false
+        type: string
+      responses:
+        200:
+          description: Returns concepts based on the provided query parameters.
+          examples:
+            application/json:
+              concepts:
+              - apiUrl: http://api.ft.com/things/61d707b5-6fab-3541-b017-49b72de80772
+                id: http://www.ft.com/thing/61d707b5-6fab-3541-b017-49b72de80772
+                prefLabel: Analysis
+                type: http://www.ft.com/ontology/Genre
+        400:
+          description: Incorrect request parameters or invalid concept type.
+        500:
+          description: Failed to search for concepts, usually caused by issues with
+            ES.
+      summary: Concept Query
+      tags:
+      - Public API
+schemes:
+- https
+swagger: "2.0"

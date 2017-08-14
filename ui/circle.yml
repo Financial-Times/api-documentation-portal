@@ -1,0 +1,15 @@
+test:
+  override:
+    - npm test
+  pre:
+    - mkdir -p test/bin/
+    - wget http://selenium-release.storage.googleapis.com/3.1/selenium-server-standalone-3.1.0.jar -O test/bin/selenium-server-standalone-3.1.0.jar
+general:
+  artifacts:
+    - test/nightwatch/report
+    - test/nightwatch/screenshots
+machine:
+  timezone:
+    Europe/London
+  node:
+    version: v6.0.0
