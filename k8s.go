@@ -46,7 +46,7 @@ func newK8sWatcherForConfig(config *rest.Config) *k8sWatcher {
 	return k8sService
 }
 
-func (k *k8sWatcher) Watch(ctx context.Context, registry *AppRegistry) error {
+func (k *k8sWatcher) Watch(ctx context.Context, registry *ServiceRegistry) error {
 	log.Info("Watching k8s")
 	watcher, err := k.k8s.CoreV1().Services("default").Watch(meta_v1.ListOptions{LabelSelector: "hasHealthcheck=true"})
 	if err != nil {
@@ -58,7 +58,8 @@ func (k *k8sWatcher) Watch(ctx context.Context, registry *AppRegistry) error {
 		k8sService := service.Object.(*v1.Service)
 		log.Info(k8sService.Name)
 		// TODO: get the port properly
-		registry.RegisterApp(k8sService.Name, "http://"+k8sService.Name+":8080/__api")
+
+		registry.RegisterService(k8sService.Name, "http://"+k8sService.Name+":8080/__api")
 	}
 
 	return nil

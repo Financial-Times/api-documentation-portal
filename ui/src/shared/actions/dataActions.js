@@ -20,7 +20,7 @@ class DataActions {
      }
 
      request
-      .get(`apps`)
+      .get(`services`)
       .end(function(err, res) {
         if (err || !res.ok) {
           return

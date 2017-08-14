@@ -29,7 +29,7 @@ func main() {
 		// return err
 		// }
 
-		registry := NewAppRegistry()
+		registry := NewServiceRegistry()
 
 		// watcherCallback := func(key, val string) {
 		// 	if appNameRegex.MatchString(key) {
@@ -59,11 +59,11 @@ func main() {
 	app.Run(os.Args)
 }
 
-func serve(registry *AppRegistry) error {
+func serve(registry *ServiceRegistry) error {
 	r := vestigo.NewRouter()
 
 	r.Get("/__gtg", gtg())
-	r.Get("/apps", appsHandler(registry))
+	r.Get("/services", servicesHandler(registry))
 
 	box := ui.UI()
 	dist := http.FileServer(box.HTTPBox())

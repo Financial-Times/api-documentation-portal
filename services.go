@@ -10,27 +10,27 @@ func init() {
 	loads.AddLoader(fmts.YAMLMatcher, fmts.YAMLDoc)
 }
 
-type AppRegistry struct {
-	Apps map[string]App `json:"services"`
+type ServiceRegistry struct {
+	Services map[string]Service `json:"services"`
 }
 
-type App struct {
+type Service struct {
 	Name        string `json:"name"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	APIEndpoint string `json:"api"`
 }
 
-func NewAppRegistry() *AppRegistry {
-	return &AppRegistry{Apps: make(map[string]App, 0)}
+func NewServiceRegistry() *ServiceRegistry {
+	return &ServiceRegistry{Services: make(map[string]Service, 0)}
 }
 
-func (s *AppRegistry) RegisterApp(app string, endpoint string) {
+func (s *ServiceRegistry) RegisterService(name string, endpoint string) {
 	swagger, err := loads.Spec(endpoint)
 	if err != nil {
-		log.WithField("service", app).WithField("endpoint", endpoint).WithError(err).Info("Failed to parse/locate OpenAPI spec for service.")
+		log.WithField("service", name).WithField("endpoint", endpoint).WithError(err).Info("Failed to parse/locate OpenAPI spec for service.")
 		return
 	}
 
-	s.Apps[app] = App{app, swagger.Spec().Info.Title, swagger.Spec().Info.Description, endpoint}
+	s.Services[name] = Service{name, swagger.Spec().Info.Title, swagger.Spec().Info.Description, endpoint}
 }
