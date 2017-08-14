@@ -5,8 +5,8 @@ import (
 	"net/http"
 )
 
-type apps struct {
-	Apps []App `json:"apps"`
+type services struct {
+	Apps []App `json:"services"`
 }
 
 func appsHandler(registry *AppRegistry) func(w http.ResponseWriter, r *http.Request) {
@@ -15,11 +15,17 @@ func appsHandler(registry *AppRegistry) func(w http.ResponseWriter, r *http.Requ
 
 		enc := json.NewEncoder(w)
 
-		a := apps{}
+		a := services{Apps: make([]App, 0)}
 		for _, v := range registry.Apps {
 			a.Apps = append(a.Apps, v)
 		}
 
 		enc.Encode(a)
+	}
+}
+
+func gtg() func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(200)
 	}
 }

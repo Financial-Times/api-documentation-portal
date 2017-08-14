@@ -3,8 +3,8 @@
 # Declare variables to be passed into your templates.
 service:
   name: "" # The name of the service, should be defined in the specific app-configs folder
-  hasHealthcheck: "true"
-  hasOpenAPI: "true"
+  hasHealthcheck: "false"
+  hasOpenAPI: "false"
 replicaCount: 2
 image:
   repository: coco/api-documentation-portal

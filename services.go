@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/go-openapi/loads"
 	"github.com/go-openapi/loads/fmts"
+	log "github.com/sirupsen/logrus"
 )
 
 func init() {
@@ -27,6 +28,7 @@ func NewAppRegistry() *AppRegistry {
 func (s *AppRegistry) RegisterApp(app string, endpoint string) {
 	swagger, err := loads.Spec(endpoint)
 	if err != nil {
+		log.WithField("service", app).WithField("endpoint", endpoint).WithError(err).Info("Failed to parse/locate OpenAPI spec for service.")
 		return
 	}
 

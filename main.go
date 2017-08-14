@@ -15,7 +15,13 @@ var appNameRegex = regexp.MustCompile(`/ft/services/(.*)/api`)
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "api-hub"
+	app.Name = "api-documentation-portal"
+	app.Flags = []cli.Flag{
+		cli.BoolFlag{
+			Name:   "external-cluster",
+			EnvVar: "EXTERNAL_CLUSTER",
+		},
+	}
 
 	app.Action = func(ctx *cli.Context) error {
 		// watcher, err := NewEtcdWatcher([]string{"http://localhost:2379"})
@@ -37,8 +43,15 @@ func main() {
 
 		// go watcher.Watch(context.Background(), "/ft/services", watcherCallback)
 
-		k8s := NewK8sWatcher()
-		k8s.Watch(context.Background())
+		useExternalCluster := ctx.Bool("external-cluster")
+		var k8s *k8sWatcher
+		if useExternalCluster {
+			k8s = NewLocalK8sWatcher(os.Getenv("KUBECONFIG"))
+		} else {
+			k8s = NewK8sWatcher()
+		}
+
+		go k8s.Watch(context.Background(), registry)
 
 		return serve(registry)
 	}
@@ -49,6 +62,7 @@ func main() {
 func serve(registry *AppRegistry) error {
 	r := vestigo.NewRouter()
 
+	r.Get("/__gtg", gtg())
 	r.Get("/apps", appsHandler(registry))
 
 	box := ui.UI()

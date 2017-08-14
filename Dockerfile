@@ -10,8 +10,8 @@ RUN apk --no-cache --virtual .build-dependencies add git \
   # Linking the project sources in the GOPATH folder
   && ln -s /${PROJECT}-sources $GOPATH/src/${REPO_PATH} \
   && cd $GOPATH/src/${REPO_PATH} \
-  && go get -u \
-  && go build -ldflags="${LDFLAGS}" \
+  && go get ${REPO_PATH} \
+  && go build \
   && mv ${PROJECT} /${PROJECT} \
   && apk del .build-dependencies \
   && rm -rf $GOPATH /var/cache/apk/*

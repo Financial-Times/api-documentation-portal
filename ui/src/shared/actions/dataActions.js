@@ -27,7 +27,7 @@ class DataActions {
         }
 
         dataStore.apps.clear();
-        res.body.apps.map((app) => {
+        res.body.services.map((app) => {
           dataStore.apps.push(app);
         })
       });
