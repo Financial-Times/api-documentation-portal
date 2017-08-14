@@ -13,6 +13,12 @@ class Documentation extends React.Component {
     var name = this.props.match.params.name
     var app = _.find(dataStore.apps, {name: name})
 
+    if(!app) {
+      return (
+         <main />
+      )
+    }
+
     return (
          <main>
             <Swagger url={app.api} />

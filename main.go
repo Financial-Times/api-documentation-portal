@@ -64,6 +64,7 @@ func serve(registry *ServiceRegistry) error {
 
 	r.Get("/__gtg", gtg())
 	r.Get("/services", servicesHandler(registry))
+	r.Get("/services/:service/__api", proxyAPI(registry))
 
 	box := ui.UI()
 	dist := http.FileServer(box.HTTPBox())
