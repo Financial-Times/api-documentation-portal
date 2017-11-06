@@ -9,7 +9,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-const defaultProtocol = "http://"
+const defaultProtocol = "https://"
 const defaultServiceName = "/__api-documentation-portal"
 const defaultAPIEndpoint = "/__api"
 
