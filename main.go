@@ -6,6 +6,9 @@ import (
 	"os"
 	"regexp"
 
+	"github.com/Financial-Times/api-documentation-portal/k8s"
+	"github.com/Financial-Times/api-documentation-portal/resources"
+	"github.com/Financial-Times/api-documentation-portal/service"
 	"github.com/Financial-Times/api-documentation-portal/ui"
 	"github.com/husobee/vestigo"
 	"github.com/urfave/cli"
@@ -19,39 +22,23 @@ func main() {
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
 			Name:   "external-cluster",
+			Usage:  "Use to connect to an external kubernetes cluster using the locally configured KUBECONFIG variable.",
 			EnvVar: "EXTERNAL_CLUSTER",
 		},
 	}
 
 	app.Action = func(ctx *cli.Context) error {
-		// watcher, err := NewEtcdWatcher([]string{"http://localhost:2379"})
-		// if err != nil {
-		// return err
-		// }
-
-		registry := NewServiceRegistry()
-
-		// watcherCallback := func(key, val string) {
-		// 	if appNameRegex.MatchString(key) {
-		// 		app := appNameRegex.FindStringSubmatch(key)[1]
-		// 		log.WithField("app", app).WithField("api", val).Info("Found new app")
-		// 		registry.RegisterApp(app, val)
-		// 	}
-		// }
-
-		// watcher.Read("/ft/services", watcherCallback)
-
-		// go watcher.Watch(context.Background(), "/ft/services", watcherCallback)
+		registry := service.NewRegistry()
 
 		useExternalCluster := ctx.Bool("external-cluster")
-		var k8s *k8sWatcher
+		var watcher service.Watcher
 		if useExternalCluster {
-			k8s = NewLocalK8sWatcher(os.Getenv("KUBECONFIG"))
+			watcher = k8s.NewLocalWatcher(os.Getenv("KUBECONFIG"))
 		} else {
-			k8s = NewK8sWatcher()
+			watcher = k8s.NewWatcher()
 		}
 
-		go k8s.Watch(context.Background(), registry)
+		go watcher.Watch(context.Background(), registry)
 
 		return serve(registry)
 	}
@@ -59,12 +46,12 @@ func main() {
 	app.Run(os.Args)
 }
 
-func serve(registry *ServiceRegistry) error {
+func serve(registry *service.Registry) error {
 	r := vestigo.NewRouter()
 
-	r.Get("/__gtg", gtg())
-	r.Get("/services", servicesHandler(registry))
-	r.Get("/services/:service/__api", proxyAPI(registry))
+	r.Get("/__gtg", resources.GTG())
+	r.Get("/services", resources.Services(registry))
+	r.Get("/services/:service/__api", resources.ProxyAPI(registry))
 
 	box := ui.UI()
 	dist := http.FileServer(box.HTTPBox())

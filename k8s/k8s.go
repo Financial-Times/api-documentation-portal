@@ -1,10 +1,10 @@
-package main
+package k8s
 
 import (
 	"context"
 	"fmt"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/Financial-Times/api-documentation-portal/service"
 
 	"k8s.io/api/core/v1"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -17,7 +17,7 @@ type k8sWatcher struct {
 	k8s kubernetes.Interface
 }
 
-func NewLocalK8sWatcher(kubeconfig string) *k8sWatcher {
+func NewLocalWatcher(kubeconfig string) service.Watcher {
 	config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
 	if err != nil {
 		panic(err.Error())
@@ -25,7 +25,7 @@ func NewLocalK8sWatcher(kubeconfig string) *k8sWatcher {
 	return newK8sWatcherForConfig(config)
 }
 
-func NewK8sWatcher() *k8sWatcher {
+func NewWatcher() service.Watcher {
 	config, err := rest.InClusterConfig()
 	if err != nil {
 		panic(err.Error())
@@ -33,7 +33,7 @@ func NewK8sWatcher() *k8sWatcher {
 	return newK8sWatcherForConfig(config)
 }
 
-func newK8sWatcherForConfig(config *rest.Config) *k8sWatcher {
+func newK8sWatcherForConfig(config *rest.Config) service.Watcher {
 	k8sClient, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		panic(fmt.Sprintf("Failed to create k8s client, error was: %v", err.Error()))
@@ -46,9 +46,8 @@ func newK8sWatcherForConfig(config *rest.Config) *k8sWatcher {
 	return k8sService
 }
 
-func (k *k8sWatcher) Watch(ctx context.Context, registry *ServiceRegistry) error {
-	log.Info("Watching k8s")
-	watcher, err := k.k8s.CoreV1().Services("default").Watch(meta_v1.ListOptions{LabelSelector: "hasHealthcheck=true"})
+func (k *k8sWatcher) Watch(ctx context.Context, registry *service.Registry) error {
+	watcher, err := k.k8s.CoreV1().Services("default").Watch(meta_v1.ListOptions{LabelSelector: "hasOpenAPI=true"})
 	if err != nil {
 		return err
 	}
@@ -56,9 +55,7 @@ func (k *k8sWatcher) Watch(ctx context.Context, registry *ServiceRegistry) error
 	results := watcher.ResultChan()
 	for service := range results {
 		k8sService := service.Object.(*v1.Service)
-		log.Info(k8sService.Name)
 		// TODO: get the port properly
-
 		registry.RegisterService(k8sService.Name, "http://"+k8sService.Name+":8080/__api")
 	}
 
