@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-openapi/loads"
 	"github.com/go-openapi/loads/fmts"
+	"github.com/go-openapi/spec"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -24,10 +25,11 @@ type Registry struct {
 
 // Service is information gleaned from the /__api of a service
 type Service struct {
-	Name        string `json:"name"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	APIEndpoint string `json:"api"`
+	Name        string   `json:"name"`
+	Title       string   `json:"title"`
+	Description string   `json:"description"`
+	Tags        []string `json:"tags"`
+	APIEndpoint string   `json:"api"`
 }
 
 // NewRegistry creates a new registry
@@ -43,5 +45,50 @@ func (r *Registry) RegisterService(name string, endpoint string) {
 		return
 	}
 
-	r.Services[name] = Service{name, swagger.Spec().Info.Title, swagger.Spec().Info.Description, endpoint}
+	spec := swagger.Spec()
+
+	r.Services[name] = Service{
+		Name:        name,
+		Title:       spec.Info.Title,
+		Description: spec.Info.Description,
+		Tags:        getTags(spec),
+		APIEndpoint: endpoint,
+	}
+}
+
+func getTags(spec *spec.Swagger) []string {
+	tagSet := make(map[string]struct{})
+	for _, path := range spec.Paths.Paths {
+		if path.Get != nil {
+			appendToMap(tagSet, path.Get.Tags...)
+		}
+
+		if path.Post != nil {
+			appendToMap(tagSet, path.Post.Tags...)
+		}
+
+		if path.Put != nil {
+			appendToMap(tagSet, path.Post.Tags...)
+		}
+
+		if path.Delete != nil {
+			appendToMap(tagSet, path.Post.Tags...)
+		}
+	}
+
+	return keysToArray(tagSet)
+}
+
+func keysToArray(m map[string]struct{}) []string {
+	r := make([]string, 0)
+	for k := range m {
+		r = append(r, k)
+	}
+	return r
+}
+
+func appendToMap(m map[string]struct{}, data ...string) {
+	for _, v := range data {
+		m[v] = struct{}{}
+	}
 }

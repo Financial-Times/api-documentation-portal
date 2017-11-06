@@ -1,0 +1,48 @@
+@import '../variables/variables';
+
+div.apps {
+  background-color: white;
+  border: 1px solid rgb(221, 221, 221);
+  padding: 1.4rem;
+}
+
+section.app {
+  padding-top: 0.8rem;
+
+  margin-bottom: 2.6rem;
+  padding-bottom: 1.8rem;
+  border-bottom: 1px solid rgb(221, 221, 221);
+
+  h1 {
+    font-family: $app-title-font;
+    text-transform: capitalize;
+    font-size: 1.8em;
+
+    display: inline-block;
+  }
+
+  p {
+    font-size: 1.2em;
+    font-family: $light-font;
+    font-weight: lighter;
+  }
+
+  button {
+    font-size: 0.8em;
+  }
+
+  span.tag {
+    display: inline-block;
+    float: right;
+
+    font-family: $app-title-font;
+    font-size: 0.8em;
+    color: white;
+    text-transform: uppercase;
+
+    margin-right: 1em;
+    background-color: $nice-blue;
+
+    padding: 4px 8px;
+  }
+}

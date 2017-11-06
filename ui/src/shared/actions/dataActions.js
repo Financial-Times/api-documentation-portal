@@ -13,7 +13,7 @@ class DataActions {
    @action getApps() {
      if(process.env.NODE_ENV === 'test') {
        dataStore.apps.clear();
-       fixtures.apps.map((app) => {
+       fixtures.services.map((app) => {
          dataStore.apps.push(app);
        })
        return

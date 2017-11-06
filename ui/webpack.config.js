@@ -13,6 +13,9 @@ module.exports = {
   entry: {
     app:[
       path.join(__dirname, 'src/client/entry')
+    ],
+    documentation: [
+      path.join(__dirname, 'src/client/documentation')
     ]
   },
   output: {
@@ -68,9 +71,16 @@ module.exports = {
   plugins: [
     new ExtractTextPlugin('styles/[name].main.css'),
     new HtmlWebpackPlugin({
-      title: 'UPP API Hub',
+      title: 'API Documentation Portal',
       filename: 'index.html',
-      template:'client/index.html'
+      template:'client/index.html',
+      chunks: ['app']
+    }),
+    new HtmlWebpackPlugin({
+      title: 'API Documentation Portal',
+      filename: 'documentation.html',
+      template:'client/documentation.html',
+      chunks: ['documentation']
     }),
     new webpack.optimize.UglifyJsPlugin({mangle: false, sourcemap: true, comments:false}),
     new webpack.EnvironmentPlugin([

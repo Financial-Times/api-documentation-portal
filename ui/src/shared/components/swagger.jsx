@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { SwaggerUIBundle as SwaggerUi, SwaggerUIStandalonePreset } from 'swagger-ui-dist'
-//import 'swagger-ui/dist/swagger-ui.css';
 
 export default class SwaggerUI extends React.Component {
 
@@ -9,7 +8,6 @@ export default class SwaggerUI extends React.Component {
     SwaggerUi({
       dom_id: '#swaggerContainer',
       url: this.props.url,
-      //url: 'http://petstore.swagger.io/v2/swagger.json',
       spec: undefined,
       presets: [
         SwaggerUi.presets.apis,

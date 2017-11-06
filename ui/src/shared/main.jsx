@@ -4,34 +4,35 @@ import {observer} from 'mobx-react';
 import dataStore from './stores/dataStore';
 
 import App from './components/app';
-import Banner from './components/banner';
 import Header from './components/header';
-import Sidebar from './components/sidebar';
+import Searchbar from './components/search';
 
 @observer
 class Main extends React.Component {
 
   render() {
+    var appFilter = new RegExp(dataStore.filter.toLowerCase())
+
+    var displayApps = dataStore.apps.map((app) => {
+      if (appFilter.test(app.name.toLowerCase())){
+        return app;
+      }
+      return undefined;
+    }).filter((app) => { return app });
+
     return (
-         <main>
-            <Header />
-            <Banner />
+      <main className="skeleton">
+        <article className="container">
+          <Header />
+          <Searchbar />
 
-            <div className="o-techdocs-container">
-               <div className="o-techdocs-layout">
-
-                  <Sidebar apps={dataStore.apps} />
-
-                  <div className="o-techdocs-main">
-                     <div className="o-techdocs-content">
-                        {dataStore.apps.map((app) => {
-                          return (<App key={app.name} app={app} />)
-                        })}
-                     </div>
-                  </div>
-               </div>
-            </div>
-         </main>
+          <div className="apps">
+            {displayApps.map((app) => {
+              return (<App key={app.name} app={app} />)
+            })}
+          </div>
+        </article>
+      </main>
     )
   }
 }

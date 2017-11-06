@@ -47,7 +47,7 @@ func newK8sWatcherForConfig(config *rest.Config) service.Watcher {
 }
 
 func (k *k8sWatcher) Watch(ctx context.Context, registry *service.Registry) error {
-	watcher, err := k.k8s.CoreV1().Services("default").Watch(meta_v1.ListOptions{LabelSelector: "hasOpenAPI=true"})
+	watcher, err := k.k8s.CoreV1().Services("default").Watch(meta_v1.ListOptions{LabelSelector: "hasHealthcheck=true"})
 	if err != nil {
 		return err
 	}

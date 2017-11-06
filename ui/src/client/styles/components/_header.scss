@@ -1,32 +1,17 @@
-// .header {
-//   min-height: initial;
-//   background-color: #f8f8f8;
-//   border: 1px solid transparent;
-//   border-color: #e7e7e7;
-//   border-radius: 4px;
-//   position: relative;
-//   margin-bottom: 0px;
-//   a {
-//     text-decoration: none;
-//   }
-//   h1 {
-//     font-weight: 300;
-//     text-decoration: none;
-//     font-size: 165%;
-//     display: inline-block;
-//     margin: 0;
-//     padding: 0;
-//     vertical-align: middle;
-//     color: black;
-//   }
-// }
-//
+header {
+   padding-top: 1.8rem;
+   margin-bottom: 3rem;
 
-.headroom-wrapper {
-  background-color: black;
-  color: white;
-  h1 {
-    font-size: 2em;
-    padding: .5em;
-  }
+   h1 {
+      font-size: 2.2em;
+      display: inline-block;
+      margin-left: 0.6em;
+   }
+
+   .header__ftlogo {
+      width: 1.6em;
+      height: 1.6em;
+      display: inline-block;
+      background-image: url('https://www.ft.com/__origami/service/image/v2/images/raw/ftlogo-v1:brand-ft-logo-square?source=universal-publishing');
+   }
 }
