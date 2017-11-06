@@ -1,4 +1,4 @@
 apiVersion: v1
 description: API Documentations Portal Helm chart for Kubernetes
 name: api-documentation-portal
-version: 0.0.1.10pc.rc10  # this entry can be left untouched as it is automatically handled by Jenkins pipeline
+version: 0.0.1.10pc.rc11  # this entry can be left untouched as it is automatically handled by Jenkins pipeline

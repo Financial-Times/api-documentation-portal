@@ -1,6 +1,3 @@
-# Default values for draft-annotations-api.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
 service:
   name: "" # The name of the service, should be defined in the specific app-configs folder
   hasHealthcheck: "false"
@@ -9,8 +6,3 @@ replicaCount: 2
 image:
   repository: coco/api-documentation-portal
   pullPolicy: Always
-#resources:
-#  limits:
-#    memory: 256Mi
-ingress:
-  host: "pre-prod-eu-pac.ft.com"
