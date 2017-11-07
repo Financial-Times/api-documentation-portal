@@ -17,6 +17,13 @@ class Main extends React.Component {
       if (appFilter.test(app.name.toLowerCase())){
         return app;
       }
+
+      for(var i = 0; i < app.paths.length ; i++ ){
+        if (appFilter.test(app.paths[i])){
+          return app;
+        }
+      }
+
       return undefined;
     }).filter((app) => { return app });
 

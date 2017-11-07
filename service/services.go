@@ -29,6 +29,7 @@ type Service struct {
 	Title       string   `json:"title"`
 	Description string   `json:"description"`
 	Tags        []string `json:"tags"`
+	Paths       []string `json:"paths"`
 	APIEndpoint string   `json:"api"`
 }
 
@@ -46,19 +47,25 @@ func (r *Registry) RegisterService(name string, endpoint string) {
 	}
 
 	spec := swagger.Spec()
+	paths, tags := getPathsAndTags(spec)
 
 	r.Services[name] = Service{
 		Name:        name,
 		Title:       spec.Info.Title,
 		Description: spec.Info.Description,
-		Tags:        getTags(spec),
+		Tags:        tags,
+		Paths:       paths,
 		APIEndpoint: endpoint,
 	}
 }
 
-func getTags(spec *spec.Swagger) []string {
+func getPathsAndTags(spec *spec.Swagger) ([]string, []string) {
 	tagSet := make(map[string]struct{})
-	for _, path := range spec.Paths.Paths {
+	pathSet := make(map[string]struct{})
+
+	for p, path := range spec.Paths.Paths {
+		pathSet[p] = struct{}{}
+
 		if path.Get != nil {
 			appendToMap(tagSet, path.Get.Tags...)
 		}
@@ -76,7 +83,7 @@ func getTags(spec *spec.Swagger) []string {
 		}
 	}
 
-	return keysToArray(tagSet)
+	return keysToArray(pathSet), keysToArray(tagSet)
 }
 
 func keysToArray(m map[string]struct{}) []string {
