@@ -52,7 +52,7 @@
     "lodash": "^4.17.4",
     "meow": "^3.7.0",
     "nightwatch": "^0.9.16",
-    "node-sass": "^4.5.3",
+    "node-sass": "^4.13.1",
     "postcss-loader": "^2.0.6",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.18.2",
