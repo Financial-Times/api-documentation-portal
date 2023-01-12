@@ -51,7 +51,7 @@
     "jest-cli": "^20.0.4",
     "lodash": "^4.17.4",
     "meow": "^3.7.0",
-    "nightwatch": "^0.9.16",
+    "nightwatch": "^2.6.10",
     "node-sass": "^4.5.3",
     "postcss-loader": "^2.0.6",
     "sass-loader": "^6.0.6",
