@@ -63,7 +63,7 @@
     "webpack-hot-middleware": "^2.18.2"
   },
   "dependencies": {
-    "ejs": "^2.5.7",
+    "ejs": "^3.1.7",
     "mobx": "^3.2.1",
     "mobx-react": "^4.2.2",
     "moment": "^2.18.1",
