@@ -70,7 +70,7 @@
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-router-dom": "^4.1.2",
-    "superagent": "^3.5.2",
+    "superagent": "^7.0.2",
     "swagger-ui-dist": "^3.4.3"
   }
 }
